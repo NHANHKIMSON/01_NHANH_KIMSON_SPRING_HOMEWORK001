@@ -17,11 +17,11 @@ public class Ticket {
     private String sourceStation;
     private String destinationStation;
     private double price;
-    private String paymentStatus;
+    private boolean paymentStatus;
     private String ticketStatus;
-    private int seatNumber;
+    private String seatNumber;
 
-    public Ticket(String passengerName, String travelDate, String sourceStation, String destinationStation, double price, String paymentStatus, String ticketStatus, int seatNumber) {
+    public Ticket(String passengerName, String travelDate, String sourceStation, String destinationStation, double price, boolean paymentStatus, String ticketStatus, String seatNumber) {
         this.ticketId = count++;
         this.passengerName = passengerName;
         this.travelDate = travelDate;

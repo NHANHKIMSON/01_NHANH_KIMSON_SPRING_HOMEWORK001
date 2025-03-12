@@ -14,7 +14,7 @@ public class TicketRequest {
     String sourceStation;
     String destinationStation;
     double price;
-    String paymentStatus;
+    boolean paymentStatus;
     String ticketStatus;
-    int seatNumber;
+    String seatNumber;
 }

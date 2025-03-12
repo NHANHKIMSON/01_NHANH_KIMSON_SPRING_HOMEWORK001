@@ -1,11 +1,15 @@
 package org.example._01_nhanh_kimson_spring_homework001.Controller;
 
+import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.ApiResponse;
 import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.Ticket;
 import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.TicketRequest.TicketRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -26,13 +30,22 @@ class TicketController{
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addTicket(@RequestBody TicketRequest ticketRequest){
-        ArrayList<Ticket> newTickets = new ArrayList<>();
-        tickets.add(new Ticket(ticketRequest.getPassengerName(), ticketRequest.getTravelDate(), ticketRequest.getSourceStation(),
-                ticketRequest.getDestinationStation(), ticketRequest.getPrice(), ticketRequest.getPaymentStatus(),
-                ticketRequest.getTicketStatus(), ticketRequest.getSeatNumber()
-                ));
-        return ResponseEntity.ok("Ticket added successfully");
+    public ResponseEntity<ApiResponse<Ticket>> addTicket(@RequestBody TicketRequest ticketRequest) {
+        // Create a new ticket object
+        Ticket newTicket = new Ticket(ticketRequest.getPassengerName(), ticketRequest.getTravelDate(),
+                ticketRequest.getSourceStation(), ticketRequest.getDestinationStation(),
+                ticketRequest.getPrice(), ticketRequest.isPaymentStatus(),
+                ticketRequest.getTicketStatus(), ticketRequest.getSeatNumber());
+
+        tickets.add(newTicket);
+
+        ApiResponse<Ticket> response = new ApiResponse<>(
+                true,
+                "Ticket created successfully",
+                "100 CONTIME",
+                new ApiResponse.Payload<>(Collections.singletonList(newTicket)) // Fix: Use a single object
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
@@ -47,11 +60,11 @@ class TicketController{
                 ticket.setSourceStation(ticketRequest.getSourceStation());
                 ticket.setDestinationStation(ticketRequest.getDestinationStation());
                 ticket.setPrice(ticketRequest.getPrice());
-                ticket.setPaymentStatus(ticketRequest.getPaymentStatus());
+                ticket.setPaymentStatus(ticketRequest.isPaymentStatus());
                 ticket.setTicketStatus(ticketRequest.getTicketStatus());
                 ticket.setSeatNumber(ticketRequest.getSeatNumber());
             }
         }
-        return ResponseEntity.ok("Ticket updated successfully");
+        return new ResponseEntity<>("Ticket updated successfully", HttpStatus.OK);
     }
 }
