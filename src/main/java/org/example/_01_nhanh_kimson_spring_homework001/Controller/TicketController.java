@@ -13,7 +13,8 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/tickets")
-class TicketController{
+//@Tag(description = "Ticket API", name = "Nhanh Kimson")
+public class TicketController{
     private final ArrayList<Ticket> tickets = new ArrayList<>();
     // Add Static add with autoIncrement of id
     public TicketController() {
@@ -209,14 +210,12 @@ class TicketController{
         }
         return ResponseEntity.ok(new ApiResponse<>(
                 true,
-                ".",
+                "Tickets not filtered successfully.",
                 HttpStatus.BAD_REQUEST,
                 null,
                 LocalDateTime.now()
         ));
     }
-
-
 
     //    Create New Ticket
     @PostMapping("/create-multi")
@@ -236,6 +235,7 @@ class TicketController{
             newTickets.add(newTicket);
         }
         synchronized (tickets) {
+            newTickets.addAll(tickets);
         }
         ApiResponse<Ticket> response = new ApiResponse<>(
                 true,
@@ -246,8 +246,6 @@ class TicketController{
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-
     @PutMapping("/update-multiple")
     public ResponseEntity<ApiResponse<Ticket>> updateTicketMulti(@RequestBody UpdateTicketRequest updateTicketRequest, TimeZone timeZone) {
         List<Ticket> updatedTickets = new ArrayList<>();
