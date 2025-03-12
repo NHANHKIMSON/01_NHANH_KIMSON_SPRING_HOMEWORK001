@@ -4,7 +4,9 @@ package org.example._01_nhanh_kimson_spring_homework001.Model.Entity;
 import jakarta.validation.Payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -12,8 +14,10 @@ import java.util.List;
 public class ApiResponse<T> {
     private boolean success;
     private String message;
-    private String status;
+    private HttpStatus status;
     private Payload<T> payload;
+    private LocalDateTime timestamp;
+
 
 
     @Data

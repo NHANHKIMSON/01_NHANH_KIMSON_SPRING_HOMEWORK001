@@ -1,16 +1,13 @@
 package org.example._01_nhanh_kimson_spring_homework001.Model.Entity;
 
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.security.PrivateKey;
 
 @Data
 @NoArgsConstructor
 public class Ticket {
-    private static int count = 0;
+    private static int count = 1;
     private int ticketId;
     private String passengerName;
     private String travelDate;
