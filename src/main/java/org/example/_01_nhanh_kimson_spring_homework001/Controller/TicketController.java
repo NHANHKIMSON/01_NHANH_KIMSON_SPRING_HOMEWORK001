@@ -3,6 +3,7 @@ package org.example._01_nhanh_kimson_spring_homework001.Controller;
 import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.ApiResponse;
 import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.Ticket;
 import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.TicketRequest.TicketRequest;
+import org.example._01_nhanh_kimson_spring_homework001.Model.Entity.TicketRequest.UpdateTicketRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -244,5 +245,26 @@ class TicketController{
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+    @PutMapping("/update-multiple")
+    public ResponseEntity<ApiResponse<Ticket>> updateTicketMulti(@RequestBody UpdateTicketRequest updateTicketRequest, TimeZone timeZone) {
+        List<Ticket> updatedTickets = new ArrayList<>();
+        for (int id : updateTicketRequest.getTicketIds()) {
+            for (Ticket ticket : tickets) {
+                if (ticket.getTicketId() == id) {
+                    ticket.setPaymentStatus(updateTicketRequest.isPaymentStatus());
+                    updatedTickets.add(ticket);
+                }
+            }
+        }
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                "Updated successfully",
+                HttpStatus.OK,
+                new ApiResponse.Payload<>(updatedTickets),
+                LocalDateTime.now()
+        ));
     }
 }
