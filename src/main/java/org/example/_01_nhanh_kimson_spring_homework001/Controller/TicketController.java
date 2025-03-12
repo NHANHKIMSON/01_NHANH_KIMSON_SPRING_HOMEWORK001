@@ -57,6 +57,9 @@ class TicketController{
         ));
     }
 
+
+//    public ResponseEntity<ApiResponse<Ticket>> updateTicketStatus()
+
     @GetMapping("/search/{id}")
     public ResponseEntity<ApiResponse<Ticket>> getTicketsById(@PathVariable Integer id) {
         for (Ticket ticket : tickets) {
@@ -157,7 +160,6 @@ class TicketController{
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
     @GetMapping("search/name")
     public ResponseEntity<ApiResponse<Ticket>> searchByName(@RequestParam String name) {
         List<Ticket> searchList = new ArrayList<>();
@@ -192,13 +194,55 @@ class TicketController{
         COMPLETED, IN_PROGRESS, FAILED;
     }
     @GetMapping("/bytype")
-    public Ticket searchTicketsByType(@RequestParam TicketStatus ticketStatus, @RequestParam String name  ) {
+    public ResponseEntity<ApiResponse<Ticket>> searchTicketsByType(@RequestParam TicketStatus ticketStatus, @RequestParam String name  ) {
         for(Ticket ticket : tickets){
             if(ticket.getPassengerName().equals(name) && ticket.getTicketStatus().equals(ticketStatus.toString())) {
-                return ticket;
+                return ResponseEntity.ok(new ApiResponse<>(
+                        true,
+                        "Tickets filtered successfully.",
+                        HttpStatus.OK,
+                        new ApiResponse.Payload<>(Collections.singletonList(ticket)),
+                        LocalDateTime.now()
+                ));
             }
         }
-        return null;
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                ".",
+                HttpStatus.BAD_REQUEST,
+                null,
+                LocalDateTime.now()
+        ));
     }
 
+
+
+    //    Create New Ticket
+    @PostMapping("/create-multi")
+    public ResponseEntity<ApiResponse<Ticket>> addTicketMulti(@RequestBody List<TicketRequest> ticketRequests, TimeZone timeZone) {
+        List<Ticket> newTickets = new ArrayList<>();
+        for (TicketRequest ticketRequest : ticketRequests) {
+            Ticket newTicket = new Ticket(
+                    ticketRequest.getPassengerName(),
+                    ticketRequest.getTravelDate(),
+                    ticketRequest.getSourceStation(),
+                    ticketRequest.getDestinationStation(),
+                    ticketRequest.getPrice(),
+                    ticketRequest.isPaymentStatus(),
+                    ticketRequest.getTicketStatus(),
+                    ticketRequest.getSeatNumber()
+            );
+            newTickets.add(newTicket);
+        }
+        synchronized (tickets) {
+        }
+        ApiResponse<Ticket> response = new ApiResponse<>(
+                true,
+                "Tickets created successfully",
+                HttpStatus.CREATED,
+                new ApiResponse.Payload<>(newTickets),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
