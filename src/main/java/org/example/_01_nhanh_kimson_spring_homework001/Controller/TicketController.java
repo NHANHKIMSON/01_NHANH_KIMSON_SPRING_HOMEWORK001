@@ -80,7 +80,7 @@ class TicketController{
     }
 
 //    Update by id
-    @PutMapping("/{id}")
+    @PutMapping("update/{id}")
     public ResponseEntity<ApiResponse<Ticket>> updateTicket(@PathVariable @RequestBody int id, @RequestBody TicketRequest ticketRequest){
         ArrayList<Ticket> newTickets = new ArrayList<>();
         for (Ticket ticket : tickets) {
@@ -111,7 +111,7 @@ class TicketController{
         ));
     }
 //    Delete by id
-    @GetMapping("/{id}")
+    @DeleteMapping("remove/{id}")
     public ResponseEntity<ApiResponse<Ticket>> deleteTicket(@PathVariable Integer id, TimeZone timeZone){
         for (Ticket ticket : tickets) {
             if(ticket.getTicketId() == id){
@@ -158,13 +158,47 @@ class TicketController{
     }
 
 
-//    @GetMapping("/name")
-//    public ApiResponse<ApiResponse<Ticket>> searchByName(@RequestParam String name) {
-//        List<Ticket> tickets = new ArrayList<>();
-//        for (Ticket ticket : tickets) {
-//            return
-//        }
-//    }
+    @GetMapping("search/name")
+    public ResponseEntity<ApiResponse<Ticket>> searchByName(@RequestParam String name) {
+        List<Ticket> searchList = new ArrayList<>();
 
+        for (Ticket ticket : tickets) {
+            if (ticket.getPassengerName().equalsIgnoreCase(name)) {
+                searchList.add(ticket);
+            }
+        }
+
+        if (!searchList.isEmpty()) {
+            return ResponseEntity.ok(new ApiResponse<>(
+                    true,
+                    "Tickets searched successfully.",
+                    HttpStatus.OK,
+                    new ApiResponse.Payload<>(searchList),
+                    LocalDateTime.now()
+            ));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(
+                    false,
+                    "No tickets found for name: " + name,
+                    HttpStatus.NOT_FOUND,
+                    null,
+                    LocalDateTime.now()
+            ));
+        }
+    }
+
+
+    public enum TicketStatus {
+        COMPLETED, IN_PROGRESS, FAILED;
+    }
+    @GetMapping("/bytype")
+    public Ticket searchTicketsByType(@RequestParam TicketStatus ticketStatus, @RequestParam String name  ) {
+        for(Ticket ticket : tickets){
+            if(ticket.getPassengerName().equals(name) && ticket.getTicketStatus().equals(ticketStatus.toString())) {
+                return ticket;
+            }
+        }
+        return null;
+    }
 
 }
